@@ -11,6 +11,19 @@ defmodule JwtVerifySignaturePlugTest do
   @ten_minutes 10 * 60
   @four_minutes 4 * 60
 
+  test "Valid master token is allowed" do
+    token = Application.get_env(:jwt, :master_token)
+    auth_header = "Bearer " <> token
+
+    conn = conn(:get, "/protected")
+    conn = put_req_header conn, "authorization", auth_header
+    conn = Jwt.Plugs.VerifySignature.call(conn, Jwt.Plugs.VerifySignature.init(@opts))
+
+    claims = conn.assigns[:jwtclaims]
+    assert claims != nil
+    assert claims["user_id"] == "master"
+  end
+
   test "Missing authorization header returns 401" do
     Application.put_env(:jwt, :current_time_for_test, :os.system_time(:seconds))
     conn = conn(:get, "/protected")
