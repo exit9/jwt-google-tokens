@@ -10,7 +10,6 @@ defmodule Jwt.Plugs.VerifySignature do
     @expired_token_error {:error, "Expired token."}
     @five_minutes 5 * 60
     @default_options %{:ignore_token_expiration => false, :time_window => @five_minutes}
-    @master_token Application.get_env(:jwt, :master_token)
 
     def init(opts) do
         case Enum.count(opts) do
@@ -37,16 +36,11 @@ defmodule Jwt.Plugs.VerifySignature do
     defp extract_token(_), do: @invalid_header_error
 
     defp verify_token({:ok, token}, opts) do
-        case token do
-            @master_token -> verify_master(token)
-            _ -> verify_signature(token) |> verify_expiration(opts)
-        end
+        verify_signature(token) |> verify_expiration(opts)
     end
     defp verify_token({:error, _}, _opts), do: @invalid_header_error
 
     defp verify_signature(token), do: Jwt.verify(token)
-
-    defp verify_master(token), do: Jwt.verify_master(token)
 
     defp verify_expiration({:ok, claims}, opts) do
         [ignore_token_expiration, time_window] = opts

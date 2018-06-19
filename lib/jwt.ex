@@ -3,6 +3,7 @@ defmodule Jwt do
     @firebase_certs_api Application.get_env(:jwt, :firebasecerts, Jwt.FirebaseCerts.PublicKey)
     @invalid_token_error {:error, "Invalid token"}
     @invalid_signature_error {:error, "Invalid signature"}
+    @check_signature Application.get_env(:jwt, :check_signature, true)
     @key_id "kid"
     @alg "alg"
 
@@ -16,29 +17,22 @@ defmodule Jwt do
     def verify(token) do
         token_parts = String.split token, "."
 
-        _verify(Enum.map(token_parts, fn(part) -> Base.url_decode64(part, padding: false) end), token_parts)
+        _verify(Enum.map(token_parts, fn(part) -> Base.url_decode64(part, padding: false) end), token_parts, @check_signature)
     end
 
-    def verify_master(token) do
-        token_parts = String.split token, "."
+    defp _verify([{:ok, header}, {:ok, claims}, {:ok, signature}], [header_b64, claims_b64, _signature_b64], false) do
 
-        _verify_master(token_parts)
+        {:ok, Poison.decode! claims} |> IO.inspect
     end
 
-    defp _verify_master([_, payload]) do
-        {:ok, Poison.decode! Base.decode64! payload}
-    end
-
-    defp _verify_master(_), do: @invalid_token_error
-
-    defp _verify([{:ok, header}, {:ok, _claims}, {:ok, signature}], [header_b64, claims_b64, _signature_b64]) do
+    defp _verify([{:ok, header}, {:ok, _claims}, {:ok, signature}], [header_b64, claims_b64, _signature_b64], true) do
         header
             |> extract_key_id
             |> retrieve_cert_exp_and_mod_for_key
             |> verify_signature(header_b64, claims_b64, signature)
     end
 
-    defp _verify(_,_), do: @invalid_token_error
+    defp _verify(_,_,_), do: @invalid_token_error
 
     defp extract_key_id(header), do: Poison.Parser.parse!(header)[@key_id]
 
