@@ -59,7 +59,8 @@ defmodule Jwt.Plugs.VerifySignature do
     defp continue_if_verified({:ok, claims}, conn) do
         assign(conn, :jwtclaims, claims)
     end
-    defp continue_if_verified({:error, _}, conn) do
+    defp continue_if_verified({:error, error}, conn) do
+        Logger.debug "verify error: #{error}"
         conn
          |> send_resp(401, "")
          |> halt
