@@ -15,7 +15,7 @@ defmodule JwtVerifySignaturePlugTest do
   test "Invalid signature allowed when check signature off" do
     Application.put_env(:jwt, :check_signature, false)
     Application.put_env(:jwt, :current_time_for_test, :os.system_time(:seconds))
-    valid_token = @test_header <> "." <> @test_claims <> "." <> @test_invalid_signature
+    valid_token = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImU3MGRiMDg5MzU5MDBkNTY0YWFiMjdiMzllNmJkNWM4NDdkMDQxM2QifQ.eyJ1c2VyX2lkIjogIm1hc3RlciIsICJleHAiOiAxNTI5ODcxMjQ5fQ==.asdasd"
     auth_header= "Bearer " <> valid_token
 
     conn = conn(:get, "/protected")
@@ -24,7 +24,6 @@ defmodule JwtVerifySignaturePlugTest do
 
     claims = conn.assigns[:jwtclaims]
     assert claims != nil
-    assert claims["name"] == "Alejandro Mezcua"
   end
 
   test "Missing authorization header returns 401" do

@@ -44,13 +44,15 @@ defmodule Jwt.Plugs.VerifySignature do
 
     defp verify_expiration({:ok, claims}, opts) do
         [ignore_token_expiration, time_window] = opts
-
+        IO.inspect claims["exp"]
+        IO.inspect time_window
+        IO.inspect claims["exp"] - time_window
         expiration_date = claims["exp"] - time_window
         now = @timeutils.get_system_time()
 
         cond do
             ignore_token_expiration -> {:ok, claims}
-            now > expiration_date -> @expired_token_error
+            now > expiration_date -> {:error, "Expired token. now: #{now}, exp: #{claims["exp"] - time_window}"}
             now < expiration_date -> {:ok, claims}
         end
     end
