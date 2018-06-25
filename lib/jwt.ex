@@ -1,4 +1,6 @@
 defmodule Jwt do
+    import Plug.Conn
+
     require Logger
 
     @google_certs_api Application.get_env(:jwt, :googlecerts, Jwt.GoogleCerts.PublicKey)
@@ -35,7 +37,7 @@ defmodule Jwt do
     end
 
     defp _verify(parts, parts64, _) do 
-        Logger.debug "Error take parts of token. Parts: #{parts}. Parts64: #{parts64}"
+        Logger.debug "Error take parts of token. Parts: #{inspect parts}. Parts64: #{inspect parts64}"
         @invalid_token_error
     end
 
