@@ -16,7 +16,6 @@ defmodule Jwt do
     """
     def verify(token) do
         token_parts = String.split token, "."
-        Logger.debug "Check signature: #{@check_signature}"
         _verify(Enum.map(token_parts, fn(part) -> Base.url_decode64(part, padding: false) end), token_parts, @check_signature)
     end
 
