@@ -34,7 +34,10 @@ defmodule Jwt do
             |> verify_signature(header_b64, claims_b64, signature)
     end
 
-    defp _verify(_,_,_), do: @invalid_token_error
+    defp _verify(parts, parts64, _) do 
+        Logger.debug "Error take parts of token. Parts: #{parts}. Parts64: #{parts64}"
+        @invalid_token_error
+    end
 
     defp extract_key_id(header), do: Poison.Parser.parse!(header)[@key_id]
 
