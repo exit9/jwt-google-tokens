@@ -40,7 +40,9 @@ defmodule Jwt do
             |> case do
                 {:ok, cert_data} -> {:ok, cert_data}
                 {:notfounderror, _} -> @firebase_certs_api.getfor(key_id)
-                _ -> @invalid_token_error 
+                _ -> 
+                    Logger.debug "Cert not found"
+                    @invalid_token_error 
             end
     end
 
@@ -53,6 +55,9 @@ defmodule Jwt do
         end
     end
 
-    defp verify_signature({:error, _}, _, _, _), do: @invalid_token_error
+    defp verify_signature({:error, message}, _, _, _) do
+        Logger.debug "Verify error: #{message}"
+        @invalid_token_error
+    end
     defp verify_signature(_, _, _, _), do: @invalid_signature_error
 end
