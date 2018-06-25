@@ -24,7 +24,7 @@ defmodule Jwt do
         _verify(Enum.map(token_parts, fn(part) -> Base.url_decode64(part, padding: false) end), token_parts, @check_signature)
     end
 
-    defp _verify([{:ok, header}, {:ok, claims}, {:ok, signature}], [header_b64, claims_b64, _signature_b64], false) do
+    defp _verify([_, {:ok, claims}, _], [header_b64, claims_b64, _signature_b64], false) do
 
         {:ok, Poison.decode! claims} |> IO.inspect
     end
