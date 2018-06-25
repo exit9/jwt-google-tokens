@@ -30,11 +30,13 @@ defmodule Jwt.Plugs.VerifySignature do
     defp extract_token(auth_header) when is_binary(auth_header) and auth_header != "" do
         case String.starts_with?(auth_header, @bearer) do
           true -> {:ok, List.last(String.split(auth_header, @bearer))}
-          false -> @invalid_header_error
+          false -> 
+            Logger.debug "Auth should starts with #{@bearer}, got: #{auth_header}"
+            @invalid_header_error
         end
     end
     defp extract_token(header) do
-        Logger.debug "Sholild be is not empty or binary: #{header}"
+        Logger.debug "Should be is not empty or binary: #{header}"
         @invalid_header_error
     end
 
