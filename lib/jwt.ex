@@ -1,4 +1,6 @@
 defmodule Jwt do
+    require Logger
+
     @google_certs_api Application.get_env(:jwt, :googlecerts, Jwt.GoogleCerts.PublicKey)
     @firebase_certs_api Application.get_env(:jwt, :firebasecerts, Jwt.FirebaseCerts.PublicKey)
     @invalid_token_error {:error, "Invalid token"}
@@ -16,6 +18,7 @@ defmodule Jwt do
     """
     def verify(token) do
         token_parts = String.split token, "."
+        Logger.debug "Check signature: #{@check_signature}"
         _verify(Enum.map(token_parts, fn(part) -> Base.url_decode64(part, padding: false) end), token_parts, @check_signature)
     end
 
