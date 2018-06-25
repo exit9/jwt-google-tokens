@@ -64,7 +64,10 @@ defmodule Jwt.Plugs.VerifySignature do
             now < expiration_date -> {:ok, claims}
         end
     end
-    defp verify_expiration({:error, _}, _opts), do: @invalid_header_error
+    defp verify_expiration({:error, message}, _opts) do
+        Logger.debug "Error token verify: #{message}"
+        @invalid_header_error
+    end
 
     defp continue_if_verified({:ok, claims}, conn) do
         assign(conn, :jwtclaims, claims)
