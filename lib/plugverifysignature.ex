@@ -33,7 +33,10 @@ defmodule Jwt.Plugs.VerifySignature do
           false -> @invalid_header_error
         end
     end
-    defp extract_token(_), do: @invalid_header_error
+    defp extract_token(header) do
+        Logger.debug "Sholild be is not empty or binary: #{header}"
+        @invalid_header_error
+    end
 
     defp verify_token({:ok, token}, opts) do
         verify_signature(token) |> verify_expiration(opts)
