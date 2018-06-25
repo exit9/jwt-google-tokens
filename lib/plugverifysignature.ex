@@ -43,7 +43,10 @@ defmodule Jwt.Plugs.VerifySignature do
     defp verify_token({:ok, token}, opts) do
         verify_signature(token) |> verify_expiration(opts)
     end
-    defp verify_token({:error, _}, _opts), do: @invalid_header_error
+    defp verify_token({:error, message}, _opts) do
+        Logger.debug "Error while processing token: #{message}"
+        @invalid_header_error
+    end
 
     defp verify_signature(token), do: Jwt.verify(token)
 
