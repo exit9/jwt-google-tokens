@@ -5,4 +5,4 @@ config :logger, level: :debug
 config :jwt, :googlecerts, Jwt.GoogleCerts.PublicKey.Mock
 config :jwt, :firebasecerts, Jwt.FirebaseCerts.PublicKey.Mock
 config :jwt, :timeutils, Jwt.TimeUtils.Mock
-config :jwt, :check_signature, false
+config :jwt, :check_signature, true

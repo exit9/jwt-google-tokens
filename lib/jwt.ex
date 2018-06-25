@@ -26,7 +26,7 @@ defmodule Jwt do
 
     defp _verify([_, {:ok, claims}, _], [header_b64, claims_b64, _signature_b64], false) do
 
-        {:ok, Poison.decode! claims} |> IO.inspect
+        {:ok, Poison.decode! claims}
     end
 
     defp _verify([{:ok, header}, {:ok, _claims}, {:ok, signature}], [header_b64, claims_b64, _signature_b64], true) do
@@ -37,6 +37,8 @@ defmodule Jwt do
     end
 
     defp _verify(parts, parts64, _) do 
+        [_, {:ok, claims}, _] = parts
+        Logger.debug "Claims part: #{claims}"
         Logger.debug "Error take parts of token. Parts: #{inspect parts}. Parts64: #{inspect parts64}"
         @invalid_token_error
     end
