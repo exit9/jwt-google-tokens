@@ -37,7 +37,6 @@ defmodule Jwt do
     end
 
     defp _verify(parts, parts64, check) do 
-        Logger.debug "Claims part: #{claims}"
         Logger.debug "Error take parts of token. Parts: #{inspect parts}. Parts64: #{inspect parts64}"
         Logger.debug "Check: #{check}"
         @invalid_token_error
