@@ -36,10 +36,10 @@ defmodule Jwt do
             |> verify_signature(header_b64, claims_b64, signature)
     end
 
-    defp _verify(parts, parts64, _) do 
-        [_, {:ok, claims}, _] = parts
+    defp _verify(parts, parts64, check) do 
         Logger.debug "Claims part: #{claims}"
         Logger.debug "Error take parts of token. Parts: #{inspect parts}. Parts64: #{inspect parts64}"
+        Logger.debug "Check: #{check}"
         @invalid_token_error
     end
 
